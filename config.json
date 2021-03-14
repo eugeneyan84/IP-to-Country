@@ -1,0 +1,10 @@
+{
+    "IP_TO_COUNTRY_URL": "http://software77.net/geo-ip/history/",
+    "DB_NAME": "db_iptocountry",
+    "DB_USER": "rootuser",
+    "DB_HOST": "localhost",
+    "DB_PORT": 5432,
+    "DB_PWD": "rupwd2021",
+    "DB_TABLE_CONFIG": "t_config",
+    "DB_TABLE_DATA": "t_ip_to_country"
+}

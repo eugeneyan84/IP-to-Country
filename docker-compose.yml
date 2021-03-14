@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  db:
+    container_name: pg_db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: rupwd2021
+      POSTGRES_USER: rootuser
+      POSTGRES_DB: db_iptocountry
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - pgnetwork
+
+  pgadmin4:
+    container_name: pg_admin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: rootuser@iptocountry.com
+      PGADMIN_DEFAULT_PASSWORD: rupwd2021
+    ports:
+      - '80:80'
+    depends_on:
+      - db
+    networks:
+      - pgnetwork
+
+networks:
+  pgnetwork:
+    driver: bridge
