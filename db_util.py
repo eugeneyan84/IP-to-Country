@@ -38,6 +38,9 @@ def get_conn():
 
 
 def get_last_file_epoch():
+    """
+    Retrieves LATEST_FILE_EPOCH configuration record from config table in DB.
+    """
     conn = None
     result = -1
     try:
@@ -57,6 +60,9 @@ def get_last_file_epoch():
 
 
 def update_last_file_epoch(epoch_value, con=None):
+    """
+    Updates LATEST_FILE_EPOCH configuration record with specified epoch_value
+    """
     updated_rows = 0
     try:
         conn = get_conn() if con is None else con
@@ -78,7 +84,11 @@ def update_last_file_epoch(epoch_value, con=None):
     return updated_rows
 
 def update_data_table(input_df, epoch_value):
-    #print('Updating data table in database now...')
+    """
+    Performs bulk-insert of records in dataframe to data table in DB.
+    Also updates the epoch_value to config table if bulk-insert operation
+    is successful.
+    """
     result = False
     validation_result = validate(input_df)
     if validation_result is not None:
@@ -90,7 +100,7 @@ def update_data_table(input_df, epoch_value):
 
     conn = get_conn()
     with conn.cursor() as cur:
-        cur.execute(f"DELETE FROM {DATA_TABLE};")
+        cur.execute(f"DELETE FROM {DATA_TABLE};") # clear the table first
         cur.copy_from(strio, DATA_TABLE, columns=input_df.columns, sep=',')
         conn.commit()
         result = (update_last_file_epoch(epoch_value, conn) == 1)
@@ -99,6 +109,9 @@ def update_data_table(input_df, epoch_value):
 
 
 def get_country_from_numeric_ip(input: int):
+    """
+    Uses the numeric format of an IPv4 address to search data table and attempt to retrieve country and respective IP range.
+    """
     conn = None
     result = None
     try:
@@ -106,7 +119,7 @@ def get_country_from_numeric_ip(input: int):
 
         COUNTRY_QUERY = f"SELECT country, CONCAT(ip_from_str, ' - ', ip_to_str) AS ip_range FROM {DATA_TABLE} WHERE {input} BETWEEN ip_from AND ip_to;"
         df = pd.read_sql_query(COUNTRY_QUERY, conn)
-        if df.shape[0] > 0:
+        if df is not None:
             result = df.to_json(orient='records')
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
@@ -117,6 +130,9 @@ def get_country_from_numeric_ip(input: int):
     return result
 
 def get_top_n_countries_by_largest_ip_range(top_count):
+    """
+    Retrieves top N countries sorted by the cumulative quantity of unique IPs assigned to them respectively.
+    """
     conn = None
     result = None
     try:

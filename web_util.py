@@ -51,6 +51,11 @@ def extract_data(target_file: str):
 
 
 def get_ip_to_country_data(last_epoch_value=0):
+    """
+    Retrieves latest file and associated epoch value from IP-to-country website.
+    Data extraction method would be called if the associated epoch value is larger
+    than the databse value passed to this method.
+    """
 
     # filename format of ip-to-country compressed file
     GZ_FILE_REGEX = r'^IpToCountry\.[0-9]+\.csv\.gz$'
@@ -63,10 +68,12 @@ def get_ip_to_country_data(last_epoch_value=0):
         target_filename = None
         soup = BeautifulSoup(page.content, 'html.parser')
         for item in soup.find_all('a', href = re.compile(GZ_FILE_REGEX)):
+
             # numerical value in filename is the epoch value that denotes
             # the timestamp of the data. The higher the numerical value, 
             # the more recent the file is, i.e. the latest file would have
-            # the largest numerical value
+            # the largest numerical value. It is compared against the database
+            # value, and is taken as the new reference is it is larger.
             if int(item['href'].split('.')[-3]) > last_epoch_value:
                 current_epoch = int(item['href'].split('.')[-3])
                 target_filename = item['href']
