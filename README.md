@@ -53,19 +53,26 @@ Ensure Docker service is running.
 | param_value | string | Holds the value associated with the given configuration key. |
 
 ## Installation & Usage
-1. Clone this repository.
+1. Ensure docker and docker-compose have been installed:
+```bash
+$ docker -v
+Docker version 19.03.8, build afacb8b7f0
+$ docker-compose -v
+docker-compose version 1.27.4, build 40524192
+```
+2. Clone this repository.
 ```bash
 $ git clone https://github.com/eugeneyan84/IP-to-Country.git
 ```
-2. Navigate to the IP-to-Country folder:
+3. Navigate to the IP-to-Country folder:
 ```bash
 $ cd IP-to-Country
 ```
-3.  There is a `docker-compose.yml` file in the IP-to-Country folder that would provide the relevant configuration specifications to run a Postgres database (exposed on port 5432), alongside a pgAdmin web-interface (exposed on port 80). Build the images and start up the containers in daemon-mode:
+4.  There is a `docker-compose.yml` file in the IP-to-Country folder that would provide the relevant configuration specifications to run a Postgres database (exposed on port 5432), alongside a pgAdmin web-interface (exposed on port 80). Build the images and start up the containers in daemon-mode:
 ```bash
 $ sudo docker-compose up -d
 ```
-4. Verify that the Docker containers `pg_admin` and `pg_db` are running:
+5. Verify that the Docker containers `pg_admin` and `pg_db` are running:
 ```bash
 $ sudo docker container ps
 
@@ -73,20 +80,20 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 3b668ccece2e        dpage/pgadmin4      "/entrypoint.sh"         1 minute ago        Up 1 minute         0.0.0.0:80->80/tcp, 443/tcp   pg_admin
 86f4996728a6        postgres            "docker-entrypoint.s…"   1 minute ago        Up 1 minute         0.0.0.0:5432->5432/tcp        pg_db
 ```
-5. In the same IP-to-Country directory, create new virtual environment called `env`:
+6. In the same IP-to-Country directory, create new virtual environment called `env`:
 ```bash
 $ python3 -m venv env
 ```
-6. Activate the newly created virtual environment with the `source` command:
+7. Activate the newly created virtual environment with the `source` command:
 ```bash
 $ source env/bin/activate
 (env) $
 ```
-7. Install the necessary packages that have been defined in the `requirements.txt` file by running the following `pip` command:
+8. Install the necessary packages that have been defined in the `requirements.txt` file by running the following `pip` command:
 ```bash
 (env) $ pip install -r requirements.txt
 ```
-8. At this point, setup of all necessary packages and respective Docker database service have been completed.  The entry-point of the tool is `main.py`. Take note that first-run of this tool would be slow, as it attempts to populate the database with data extracted from the web-source. You can view a IP to country mapping (e.g. 43.60.163.91) with the following command:
+9. At this point, setup of all necessary packages and respective Docker database service have been completed.  The entry-point of the tool is `main.py`. Take note that first-run of this tool would be slow, as it attempts to populate the database with data extracted from the web-source. You can view a IP to country mapping (e.g. 43.60.163.91) with the following command:
 ```bash
 (env) $ python3 main.py -map 43.60.163.91
 
@@ -98,7 +105,7 @@ Search result for 43.60.163.91:
     }
 ]
 ```
-9. Top-ranking countries (e.g. top 3) can be viewed with the following command:
+10. Top-ranking countries (e.g. top 3) can be viewed with the following command:
  ```bash
 (env) $ python3 main.py -top 3
 
@@ -121,4 +128,5 @@ Search result for top 3:
     }
 ]
 ```
+
 > Written with [StackEdit](https://stackedit.io/).
